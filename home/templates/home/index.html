@@ -1,0 +1,349 @@
+{% extends 'base.html' %} {% load static %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'home/css/home.css' %}" />
+<link
+  rel="stylesheet"
+  href="{% static 'libs/owl_carousel/docs/assets/owlcarousel/assets/owl.carousel.min.css' %}"
+  media="print"
+  onload="this.media='all'"
+/>
+<link
+  rel="stylesheet"
+  href="{% static 'libs/owl_carousel/docs/assets/owlcarousel/assets/owl.theme.default.min.css' %}"
+  media="print"
+  onload="this.media='all'"
+/>
+<link
+  href="//cdn-images.mailchimp.com/embedcode/classic-061523.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+{% endblock %} {% block content %}
+<div class="bg-light">
+  <!-- Hero section -->
+  <section class="callout-container">
+    <div class="row">
+      <div class="col-12">
+        <div class="text-white">
+          <h1 class="mb-3 mb-md-4">
+            Journey with <br />
+            CycleBay
+          </h1>
+          <p class="lead mb-4 mb-md-5">
+            We're not just selling bicycles - <br />
+            we're promoting a lifestyle!
+          </p>
+          <a
+            class="btn btn-cta border-white py-1"
+            href="{% url 'products' %}"
+            role="button"
+          >
+            Shop Now
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.hero -->
+
+  <!-- Value Proposition -->
+  <section id="value-proposition-container" class="container my-4 my-md-5">
+    <h2 class="mb-3 mb-sm-4">Why shop with CycleBay</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
+      <div class="col mb-2 mb-sm-4">
+        <div
+          class="card h-100 shadow-sm border-0 text-center pb-3 pt-4 position-relative"
+        >
+          <div class="card--icon pb-4">
+            <i class="fas fa-balance-scale fa-3x" aria-hidden="true"></i>
+          </div>
+          <div class="card--border-top"></div>
+          <div class="card-body py-0">
+            <h5 class="card-title mb-0">Best value for money</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col mb-2 mb-sm-4">
+        <div
+          class="card h-100 shadow-sm border-0 text-center pb-3 pt-4 position-relative"
+        >
+          <div class="card--icon pb-4">
+            <i class="fas fa-ruler fa-3x" aria-hidden="true"></i>
+          </div>
+          <div class="card--border-top"></div>
+          <div class="card-body py-0">
+            <h5 class="card-title mb-0">Individual size consulting</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col mb-2 mb-sm-4">
+        <div
+          class="card h-100 shadow-sm border-0 text-center pb-3 pt-4 position-relative"
+        >
+          <div class="card--icon pb-4">
+            <i class="fas fa-shield-alt fa-3x" aria-hidden="true"></i>
+          </div>
+          <div class="card--border-top"></div>
+          <div class="card-body py-0">
+            <h5 class="card-title mb-0">5-year warranty</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col mb-2 mb-sm-4">
+        <div
+          class="card h-100 shadow-sm border-0 text-center pb-3 pt-4 position-relative"
+        >
+          <div class="card--icon pb-4">
+            <i class="fas fa-certificate fa-3x"></i>
+          </div>
+          <div class="card--border-top"></div>
+          <div class="card-body py-0">
+            <h5 class="card-title mb-0" aria-hidden="true">
+              Certified quality
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.value-proposition -->
+
+  <!-- Featured Carousel -->
+  <section class="container-fluid mb-4 mb-md-5">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="d-flex justify-content-between mb-3 mb-sm-4 mx-3">
+          <h3>Top Selections</h3>
+          <a
+            class="btn-link text-info p-0 border-dark py-1"
+            href="{% url 'featured_products' %}"
+            role="button"
+          >
+            <strong>View All</strong>
+          </a>
+        </div>
+        <div class="card-group">
+          <div class="row mx-auto owl-carousel owl-theme">
+            {% for product in featured %}
+            <div class="item">
+              <div class="card h-100 border-0 position-relative py-3">
+                <div class="corner-ribbon">
+                  <small>&euro;{{ product.price }}</small>
+                </div>
+                {% if product.image %}
+                <a href="{% url 'product_detail' product.id %}">
+                  <img
+                    class="card-img-top img-fluid product-image"
+                    src="{{ product.image.url }}"
+                    alt="{{ product.name }}"
+                  />
+                </a>
+                {% else %}
+                <a href="{% url 'product_detail' product.id %}">
+                  <img
+                    class="card-img-top img-fluid product-image"
+                    src="{{ MEDIA_URL }}noimage.png"
+                    alt="{{ product.name }}"
+                  />
+                </a>
+                {% endif %}
+                <div class="card-body py-0">
+                  <h6 class="text-center">{{ product.name }}</h6>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.featured carousel -->
+
+  <!-- Newsletter -->
+  <section
+    id="newsletter-container"
+    class="container-fluid text-black py-4 px-4"
+  >
+    <div class="row">
+      <div class="col-12 col-md-7 my-auto">
+        <h4>Subscribe to the newsletter and stay up to date.</h4>
+        <p>
+          Get great offers, news, discounts and trends - free of charge in your
+          mailbox.
+        </p>
+      </div>
+      <div class="col-12 col-md-5 mt-1 mt-sm-0">
+        <!-- Mailchimp form -->
+        <div id="mc_embed_shell">
+          <div id="mc_embed_signup">
+            <form
+              action="https://herokuapp.us11.list-manage.com/subscribe/post?u=3e18ce344948edabf3dc55ae4&amp;id=9ddd1749d8&amp;f_id=003a4de0f0"
+              method="post"
+              id="mc-embedded-subscribe-form"
+              name="mc-embedded-subscribe-form"
+              class="validate"
+              target="_blank"
+            >
+              <div id="mc_embed_signup_scroll">
+                <div class="mc-field-group">
+                  <label for="mce-EMAIL">
+                    Email Address
+                    <span class="asterisk">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="EMAIL"
+                    class="required email"
+                    id="mce-EMAIL"
+                    required=""
+                    value=""
+                  />
+                </div>
+                <div id="mce-responses" class="clear foot">
+                  <div
+                    class="response"
+                    id="mce-error-response"
+                    style="display: none"
+                  ></div>
+                  <div
+                    class="response"
+                    id="mce-success-response"
+                    style="display: none"
+                  ></div>
+                </div>
+                <div
+                  aria-hidden="true"
+                  style="position: absolute; left: -5000px"
+                >
+                  /* real people should not fill this in and expect good things
+                  - do not remove this or risk form bot signups */
+                  <input
+                    type="text"
+                    name="b_3e18ce344948edabf3dc55ae4_9ddd1749d8"
+                    tabindex="-1"
+                    value=""
+                  />
+                </div>
+                <div class="optionalParent">
+                  <div class="clear foot">
+                    <input
+                      type="submit"
+                      name="subscribe"
+                      id="mc-embedded-subscribe"
+                      class="button"
+                      value="Subscribe"
+                    />
+                    <p style="margin: 0px auto">
+                      <a
+                        href="http://eepurl.com/iAWcjI"
+                        title="Mailchimp - email marketing made easy and fun"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span
+                          style="
+                            display: inline-block;
+                            background-color: transparent;
+                            border-radius: 4px;
+                          "
+                        >
+                          <img
+                            class="refferal_badge"
+                            src="https://digitalasset.intuit.com/render/content/dam/intuit/mc-fe/en_us/images/intuit-mc-rewards-text-dark.svg"
+                            alt="Intuit Mailchimp"
+                            style="
+                              width: 220px;
+                              height: 40px;
+                              display: flex;
+                              padding: 2px 0px;
+                              justify-content: center;
+                              align-items: center;
+                            "
+                          />
+                        </span>
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.newsletter -->
+</div>
+{% endblock %} {% block postloadjs %} {{ block.super }}
+<!-- Owl Carousel -->
+<!-- https://owlcarousel2.github.io -->
+<script src="{% static 'libs/owl_carousel/docs/assets/owlcarousel/owl.carousel.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    $(".owl-carousel").owlCarousel({
+      loop: true,
+      autoplay: true,
+      autoplayHoverPause: true,
+      animateOut: "rotateOutDownRight",
+      margin: 10,
+      nav: true,
+      navText: [
+        "<i class='text-muted fa fa-chevron-left'></i>",
+        "<i class='text-muted fa fa-chevron-right'></i>",
+      ],
+      responsive: {
+        0: {
+          items: 1,
+        },
+        576: {
+          items: 2,
+        },
+        768: {
+          items: 3,
+        },
+        1000: {
+          items: 4,
+        },
+      },
+    });
+    // aria-label attrs for owl carousel nav buttons
+    $(".owl-prev").attr("aria-label", "Previous");
+    $(".owl-next").attr("aria-label", "Next");
+    $(".owl-dot").attr("aria-label", "Carousel pagination");
+    $(".owl-dot active").attr("aria-label", "Current slide");
+  });
+</script>
+
+<!-- Mailchimp scripts -->
+<script src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>
+<script>
+  (function ($) {
+    window.fnames = new Array();
+    window.ftypes = new Array();
+    fnames[0] = "EMAIL";
+    ftypes[0] = "email";
+    fnames[1] = "FNAME";
+    ftypes[1] = "text";
+    fnames[2] = "LNAME";
+    ftypes[2] = "text";
+    fnames[3] = "ADDRESS";
+    ftypes[3] = "address";
+    fnames[4] = "PHONE";
+    ftypes[4] = "phone";
+    fnames[5] = "BIRTHDAY";
+    ftypes[5] = "birthday";
+  })(jQuery);
+  var $mcj = jQuery.noConflict(true);
+</script>
+<script type="text/javascript">
+  window.$crisp = [];
+  window.CRISP_WEBSITE_ID = "d4b69619-ddfc-4218-891c-d29b56bcd94c";
+  (function () {
+    d = document;
+    s = d.createElement("script");
+    s.src = "https://client.crisp.chat/l.js";
+    s.async = 1;
+    d.getElementsByTagName("head")[0].appendChild(s);
+  })();
+</script>
+{% endblock %}

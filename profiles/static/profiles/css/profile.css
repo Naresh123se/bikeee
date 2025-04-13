@@ -1,0 +1,30 @@
+.order-history {
+  max-height: 416px; /* height of profile form + submit button */
+  overflow-y: auto;
+}
+
+.profile-form-input.form-control {
+  color: #000;
+}
+
+#profile-update-form select option[value=""] {
+  border-color: #aab7c4 !important;
+}
+
+/* Add green border to filled out fields */
+#profile-update-form input:not(:placeholder-shown) {
+  border-color: #139b11;
+}
+
+.profile-form-input::placeholder {
+  color: #aab7c4;
+}
+
+#id_default_country,
+#id_default_country option:not(:first-child) {
+  color: #000;
+}
+
+#id_default_country option:first-child {
+  color: #aab7c4;
+}

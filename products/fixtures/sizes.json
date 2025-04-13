@@ -1,0 +1,65 @@
+[
+    {
+        "model": "products.size",
+        "pk": 1,
+        "fields": {
+            "name": "XS",
+            "friendly_name": "Extra Small",
+            "order": 1
+        }
+    },
+    {
+        "model": "products.size",
+        "pk": 2,
+        "fields": {
+            "name": "S",
+            "friendly_name": "Small",
+            "order": 2
+        }
+    },
+    {
+        "model": "products.size",
+        "pk": 3,
+        "fields": {
+            "name": "M",
+            "friendly_name": "Medium",
+            "order": 3
+        }
+    },
+    {
+        "model": "products.size",
+        "pk": 4,
+        "fields": {
+            "name": "L",
+            "friendly_name": "Large",
+            "order": 4
+        }
+    },
+    {
+        "model": "products.size",
+        "pk": 5,
+        "fields": {
+            "name": "XL",
+            "friendly_name": "Extra Large",
+            "order": 5
+        }
+    },
+    {
+        "model": "products.size",
+        "pk": 6,
+        "fields": {
+            "name": "XXL",
+            "friendly_name": "Extra Extra Large",
+            "order": 6
+        }
+    },
+    {
+        "model": "products.size",
+        "pk": 7,
+        "fields": {
+            "name": "UNI",
+            "friendly_name": "Universal",
+            "order": 7
+        }
+    }
+]

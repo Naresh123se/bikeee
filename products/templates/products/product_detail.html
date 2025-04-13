@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block extra_title %}- {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-2 flex-grow-1">
+  <div class="row d-flex justify-content-center">
+    <div class="col-12 col-md-6 col-lg-5 col-xl-4">
+      <div class="image-container my-5">
+        {% if product.image %}
+        <a href="{{ product.image.url }}" target="_blank">
+          <img class="card-img-top img-fluid" src="{{ product.image.url }}" alt="{{ product.name }}">
+        </a>
+        {% else %}
+        <a href="">
+          <img class="card-img-top img-fluid" src="{{ MEDIA_URL }}noimage.png" alt="{{ product.name }}">
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-5 col-xl-4">
+      <div class="product-details-container mb-5 mt-md-5 mx-sm-2 mx">
+        <div class="product-details-header">
+          <p class="mb-0">{{ product.name }}</p>
+          <p class="lead mb-0 text-left font-weight-bold">&euro;{{ product.price }}</p>
+        </div>
+
+       <ul class="list-unstyled mt-2 mt-md-3">
+          {% if product.brand %}
+            <li class="small mt-1 mb-0">
+              <a class="text-muted" href="{% url 'products' %}?brand={{ product.brand.name|urlencode }}">
+                <i class="fas fa-trademark mr-1"></i>{{ product.brand.friendly_name }}
+              </a>
+            </li>
+          {% endif %}
+          {% if product.category %}
+            <li class="small mt-1 mb-0">
+              <a class="text-muted" href="{% url 'products' %}?category={{ product.category.name|urlencode }}">
+                <i class="fas fa-folder-open mr-1"></i>{{ product.category.friendly_name }}
+              </a>
+            </li>
+          {% endif %}
+          {% if product.color %}
+            <li class="small mt-1 mb-0">
+              <a class="text-muted" href="{% url 'products' %}?color={{ product.color.name|urlencode  }}">
+                <i class="fas fa-palette mr-1"></i>{{ product.color.friendly_name }}
+              </a>
+            </li>
+          {% endif %}
+       </ul>
+
+      <!-- Superusers control buttons -->
+      {% if request.user.is_superuser %}
+        <small class="ml-3">
+          <a href="{% url 'edit_product' product.id %}">Edit</a> |
+          <a href="{% url 'delete_product' product.id %}" class="remove-item text-danger" role="button">
+            Delete
+          </a>
+        </small>
+      {% endif %}
+
+        <form id="add-to-bag-form" class="form" action="{% url 'add_to_bag' product.id %}" method="POST" novalidate>
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="col-12">
+              {% if product.total_count %}
+                <div class="sizes mt-2 mt-md-4">
+                  <h6 class="text-uppercase"><strong>Size</strong></h6>
+                  <div class="sizes-container ml-1">
+                    {% for productsize in product.productsize_set.all %}
+                    <label class="radio" data-toogle="tooltip" data-placement="top"
+                    {% if not productsize.count %}title="Out of stock" {% else %} title="{{ productsize.count }} in stock" {% endif %}>
+                      <input type="radio" name="productsize" value="{{ productsize.size.name }}"
+                        {% if not productsize.count %} disabled {% endif %} required>
+                      <span>{{ productsize.size.name }}</span>
+                    </label>
+                    {% endfor %}
+                  </div>
+                  <!-- Alert if radio button not checked -->
+                  <div class="d-none alert alert-danger fade w-100" role="alert">
+                    Please select a size
+                    <button type="button" class="close ml-2" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                </div>
+              {% else %}
+                <p class="text-danger mt-2"><strong>Out of stock</strong></p>
+                <!-- hidden input -->
+                <input type="hidden" name="is_out_of_stock" value="true">
+              {% endif %}
+            </div>
+
+            <div class="col d-flex justify-content-around justify-content-sm-start mt-3 ml-sm-1 ml-md-0">
+              <a href="{% url 'products' %}" class="btn btn-outline-secondary mr-2">
+                <span class="icon">
+                  <i class="fas fa-chevron-left"></i>
+                </span>
+                <span class="text-uppercase">Keep Shopping</span>
+              </a>
+              <button type="submit" class="btn btn-info text-uppercase">
+                <span class="icon">
+                  <i class="fas fa-cart-plus"></i>
+                </span>
+                <span>Add to Cart</span>
+              </button>
+            </div>
+            <input type="hidden" name="redirect_url" value="{{ request.path }}">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal for superusers to delete product -->
+{% include 'includes/modals/error_modal.html' %}
+
+{% endblock %}
+
+{% block postloadjs %}
+  {{ block.super }}
+  <script>
+    $(document).ready(function(){
+      $('.sizes label').tooltip();
+    });
+  </script>
+  <script>
+    // Alert if radio button not checked
+    $('#add-to-bag-form').submit(function(e) {
+      if (!$("form input[type='radio']").is(':checked')) {
+        e.preventDefault();
+        $('.alert').addClass('d-block show');
+        $('.sizes h6').addClass('text-danger');
+        $('.sizes-container').addClass('horizontal-shake');
+      }
+    });
+    // Remove alert if radio button checked
+    $("form input[type='radio']").change(function() {
+      $('.alert').removeClass('d-block show');
+      $('.sizes h6').removeClass('text-danger');
+      $('.sizes-container').removeClass('horizontal-shake');
+    });
+  </script>
+  <script>
+    const isOutOfStock = $('input[name="is_out_of_stock"]');
+    if (isOutOfStock.val()) {
+      $('#add-to-bag-form button[type="submit"]').prop('disabled', true);
+    };
+  </script>
+{% if request.user.is_superuser %}
+<!-- Delete product script that use the error modal for superusers  -->
+<script>
+  // Remove item and reload on click
+  $(document).ready(function () {
+    // modal trigger
+    const csrfToken = "{{ csrf_token }}";
+    const productsUrl = "{% url 'products' %}";
+    const homeUrl = "{% url 'home' %}";
+    const modalTrigger = $(".remove-item");
+    const errorModal = $('#errorModal');
+    const submitBtn = errorModal.find(".submit");
+
+    // get data from clicked modal trigger and set it to submit button on modal
+    modalTrigger.click(function (e) {
+      e.preventDefault();
+      const url = $(this).attr('href');
+
+      submitBtn.attr('data-url', url);
+      errorModal.modal('show');
+    });
+
+    // Get passed url from submit button and post it to remove_item view
+    submitBtn.on('click', function () {
+      const url = $(this).attr('data-url');
+      $.post(url, { 'csrfmiddlewaretoken': csrfToken })
+        .done(function () {
+          location.href = productsUrl;
+        })
+        .fail(function (xhr, status, error) {
+          location.href = homeUrl;
+        });
+    });
+
+  });
+</script>
+{% endif %}
+{% endblock %}

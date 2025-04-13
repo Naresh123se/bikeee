@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_title %}- Products{% endblock %}
+
+{% block extra_css %}
+<style>
+  .lazy-load {
+    background: url('{{ MEDIA_URL }}loading.gif') no-repeat center;
+    background-size: auto;
+    min-height: 15rem;
+    opacity: 0.6;
+    transition: opacity 1s ease-in-out;
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<section class="bg-light py-4 flex-grow-1">
+  <div class="container">
+    <header>
+      <div class="row mb-2">
+        <div class="col text-center">
+          <h2 class="logo-font">Bikes</h2>
+        </div>
+      </div>
+      <!-- Show current brand, category or color -->
+      <div class="row">
+        <div class="col">
+          <ul class="list-inline mb-0">
+            {% if current_categories %}
+              <li>
+                <ul class="list-inline">
+                  <h3 class="display-6 d-inline-block mb-0">
+                    <i class="fas fa-tags mr-1"></i>
+                    Categor{{ current_categories|length|pluralize:"y,ies" }}:
+                  </h3>
+                  {% for c in current_categories %}
+                    <li class="list-inline-item mr-0">
+                      <a href="{% url 'products' %}?category={{ c.name|urlencode }}">
+                        {{ c.friendly_name }}
+                      </a>
+                    {% if not forloop.last %},{% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endif %}
+            {% if current_brands %}
+              <li>
+                <ul class="list-inline">
+                  <h3 class="display-6 d-inline-block mb-0">
+                    <i class="fas fa-registered mr-1"></i>
+                    Brand{{ current_brands|length|pluralize:"s" }}:
+                  </h3>
+                  {% for b in current_brands %}
+                    <li class="list-inline-item mr-0">
+                      <a href="{% url 'products' %}?brand={{ b.name|urlencode }}">
+                        {{ b.friendly_name }}
+                      </a>
+                    {% if not forloop.last %},{% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endif %}
+            {% if current_colors %}
+              <li>
+                <ul class="list-inline">
+                  <h3 class="display-6 d-inline-block mb-0">
+                    <i class="fas fa-palette mr-1"></i>
+                    Color{{ current_colors|length|pluralize:"s" }}:
+                  </h3>
+                  {% for col in current_colors %}
+                  <li class="list-inline-item mr-0">
+                    <a href="{% url 'products' %}?color={{ col.name|urlencode }}">
+                      {{ col.friendly_name }}
+                    </a>
+                    {% if not forloop.last %},{% endif %}
+                  </li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      <!-- ./current brand, category or color -->
+
+      <!-- Products count and sort selector -->
+      <div class="row my-3">
+        <div class="col-6 my-auto">
+          <p class="text-muted-black mb-0">
+            {{ products|length }} Products{% if search_term %} found for <strong>"{{ search_term }}"</strong>{% endif %}
+          </p>
+        </div>
+        <div class="col-6 my-auto d-flex justify-content-end">
+          <div class="sort-select-wrapper">
+            <label for="sort-selector" class="sr-only">Sort by:</label>
+            <select id="sort-selector"
+              class="custom-select custom-select-sm rounded-0 border border-{% if current_sorting != 'None_None' %}info{% else %}black{% endif %}">
+              <option value="reset" {% if current_sorting == 'None_None' %}selected{% endif %}>Sort by...</option>
+              <option value="price_asc" {% if current_sorting == 'price_asc' %}selected{% endif %}>Price (low to high)
+              </option>
+              <option value="price_desc" {% if current_sorting == 'price_desc' %}selected{% endif %}>Price (high to low)
+              </option>
+              <option value="name_asc" {% if current_sorting == 'name_asc' %}selected{% endif %}>Name (A-Z)</option>
+              <option value="name_desc" {% if current_sorting == 'name_desc' %}selected{% endif %}>Name (Z-A)</option>
+              <option value="category_asc" {% if current_sorting == 'category_asc' %}selected{% endif %}>Category (A-Z)
+              </option>
+              <option value="category_desc" {% if current_sorting == 'category_desc' %}selected{% endif %}>Category (Z-A)
+              </option>
+              <option value="brand_asc" {% if current_sorting == 'brand_asc' %}selected{% endif %}>Brand (A-Z)
+              </option>
+              <option value="brand_desc" {% if current_sorting == 'brand_desc' %}selected{% endif %}>Brand (Z-A)
+              </option>
+              <option value="color_asc" {% if current_sorting == 'color_asc' %}selected{% endif %}>Color (A-Z)
+              </option>
+              <option value="color_desc" {% if current_sorting == 'color_desc' %}selected{% endif %}>Color (Z-A)
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- ./products count and sort selector -->
+    </header>
+
+    <!-- Products -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
+      {% for product in products %}
+      <div class="col px-2 mb-2 mb-sm-3">
+        <div class="card h-100 product-list-card">
+          <div class="card-header bg-white border-bottom-0 d-flex justify-content-between">
+            <!-- brand -->
+            <div>
+              {% if product.brand %}
+                <a class="badge badge-pill badge-light brand-badge text-muted-black"
+                  href="{% url 'products' %}?brand={{ product.brand.name|urlencode }}">
+                  <i class="fas fa-registered mr-1"></i>
+                  {{ product.brand.friendly_name }}
+                </a>
+              {% endif %}
+            </div>
+            <!-- color badges -->
+            <ul class="list-inline mb-0 text-center color-list"
+              data-color="{{ product.color.name }}"
+              data-colorFriendlyName="{{ product.color.friendly_name }}">
+            </ul>
+          </div>
+          <!-- product image -->
+          <div class="position-relative text-center">
+            {% if product.featured %}
+            <!-- attach badge if product is featured -->
+              <span class="ribbon-featured">Hot</span>
+            {% endif %}
+            {% if product.image %}
+            <a href="{% url 'product_detail' product.id %}">
+              <img class="card-img-top lazy-load" data-src="{{ product.image.url }}" alt="{{ product.name }}">
+            </a>
+            {% else %}
+            <a href="{% url 'product_detail' product.id %}">
+              <img class="card-img-top lazy-load" data-src="{{ MEDIA_URL }}noimage.png" alt="{{ product.name }}">
+            </a>
+            {% endif %}
+          </div>
+          <!-- product name -->
+          <div class="card-body py-2">
+            <h4 class="display-6 card-title mb-0">{{ product.name }}</h4>
+            <p class="card-text mb-0 font-weight-bold">
+              &euro;{{ product.price }}
+            </p>
+            {% if product.category %}
+            <p class="card-text small mt-1 mb-0">
+              <a class="text-muted" href="{% url 'products' %}?category={{ product.category.name|urlencode }}">
+                <small><i class="fas fa-tags mr-1"></i>{{ product.category.friendly_name }}</small>
+              </a>
+            </p>
+            {% endif %}
+          </div>
+          <div class="card-footer py-2 px-4 border-0 bg-transparent d-flex justify-content-between align-items-center">
+            {% if not product.total_count %}
+              <span class="text-danger">Out of stock</span>
+            {% else %}
+              <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-info py-0"
+                aria-label="View product details" role="button">
+                <i class="fas fa-eye"></i>
+              </a>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+              {% if request.user.is_superuser %}
+                <!-- if superuser display superusers control buttons -->
+                <small class="ml-3">
+                  <a href="{% url 'edit_product' product.id %}">Edit</a> |
+                  <a href="{% url 'delete_product' product.id %}" class="remove-item text-danger" role="button">
+                    Delete
+                  </a>
+                </small>
+              {% endif %}
+              <button class="wishlist-toggler p-0 m-0 btn-save{% if product.is_in_wishlist %}-active{% endif %}"
+                type="button" aria-label="Add to wishlist toggler" data-url="{% url 'add_to_wishlist_toggle' product.id %}">
+              </button>
+            {% else %}
+              <!-- if user not authenticated redirect to login page -->
+              <a href="{% url 'account_login' %}?next={{ request.path }}" class="btn-save"
+                aria-label="Add to wishlist button"></a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <!-- ./products -->
+
+  </div>
+</section>
+
+<!-- back to top button -->
+<div class="btt-button bg-white shadow-sm rounded-0 border border-black">
+  <a class="btt-link d-flex h-100" href="#" aria-label="Back to top">
+    <i class="fas fa-arrow-up text-black mx-auto my-auto"></i>
+  </a>
+</div>
+
+<!-- modal for superusers to delete product -->
+{% include 'includes/modals/error_modal.html' %}
+
+
+{% endblock %}
+
+{% block postloadjs %}
+{{ block.super }}
+<!-- pass csrf token -->
+<script>
+  var csrfToken = '{{ csrf_token }}';
+</script>
+<script src="{% static 'wishlist/js/wishlist_toggler.js' %}"></script>
+
+<script>
+  $('.btt-link').click(function (e) {
+    window.scrollTo(0, 0)
+  })
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Attach color badges to each product
+    const colorLists = document.querySelectorAll('.color-list');
+
+    colorLists.forEach(list => {
+      const color = list.dataset.color;
+      const friendlyName = list.dataset.colorfriendlyname;
+
+      // if color is a valid hex code or whole word color
+      // add a list item color badge with a background color of that color
+      if (color.startsWith('#') || /^[a-zA-Z]+$/.test(color)) {
+        const li = document.createElement('li');
+        // replace # with %23 to pass hex color in url
+        const parsedColor = color.startsWith('#') ? color.replace("#", "%23") : color;
+        li.classList.add("list-inline-item","color-badge", "position-relative");
+        li.style.backgroundColor = color;
+        // add a stretched-link to filter by that color
+        li.innerHTML = `<a class="stretched-link" href="{% url 'products' %}?color=${parsedColor}" aria-label="Filter by ${friendlyName}"></a>`;
+
+        // Add tooltip to color badge
+        li.setAttribute('data-toggle', 'tooltip');
+        li.setAttribute('data-placement', 'top');
+        li.setAttribute('title', friendlyName);
+        // initialize tooltip
+        li.addEventListener('mouseover', function() {
+          $(this).tooltip('show');
+        });
+        list.appendChild(li);
+      }
+    });
+  });
+</script>
+
+<script>
+  $('#sort-selector').change(function () {
+    var selector = $(this);
+    var currentUrl = new URL(window.location);
+
+    var selectedVal = selector.val();
+    if (selectedVal != "reset") {
+      var sort = selectedVal.split("_")[0];
+      var direction = selectedVal.split("_")[1];
+
+      currentUrl.searchParams.set("sort", sort);
+      currentUrl.searchParams.set("direction", direction);
+
+      window.location.replace(currentUrl);
+    } else {
+      currentUrl.searchParams.delete("sort");
+      currentUrl.searchParams.delete("direction");
+
+      window.location.replace(currentUrl);
+    }
+  })
+</script>
+<!-- Delete product script that use the error modal for superusers  -->
+<script>
+  // Remove item and reload on click
+  $(document).ready(function () {
+    // modal trigger
+    const csrfToken = "{{ csrf_token }}";
+    const productsUrl = "{% url 'products' %}";
+    const homeUrl = "{% url 'home' %}";
+    const modalTrigger = $(".remove-item");
+    const errorModal = $('#errorModal');
+    const submitBtn = errorModal.find(".submit");
+
+    // get data from clicked modal trigger and set it to submit button on modal
+    modalTrigger.click(function (e) {
+      e.preventDefault();
+      const url = $(this).attr('href');
+
+      submitBtn.attr('data-url', url);
+      errorModal.modal('show');
+    });
+
+    // Get passed url from submit button and post it to remove_item view
+    submitBtn.on('click', function () {
+      const url = $(this).attr('data-url');
+      $.post(url, { 'csrfmiddlewaretoken': csrfToken })
+        .done(function () {
+          location.href = productsUrl;
+        })
+        .fail(function (xhr, status, error) {
+          location.href = homeUrl;
+        });
+    });
+  });
+</script>
+<script>
+  // Lazy load images using Intersection Observer
+  $(document).ready(function() {
+    // Initialize Intersection Observer
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          let el = $(entry.target);
+          el.attr('src', el.data('src'));
+          el.removeClass('lazy-load'); // remove the class to avoid re-loading
+          observer.unobserve(entry.target); // Stop observing this element
+        }
+      });
+    }, {
+      // Load images 100px before they appear on viewport.
+      rootMargin: '100px'
+    });
+
+    // Observe each element with the 'lazy-load' class
+    $('.lazy-load').each(function() {
+      observer.observe(this);
+    });
+  });
+</script>
+{% endblock %}

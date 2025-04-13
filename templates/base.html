@@ -1,0 +1,368 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  {% block meta %}
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="CycleBay is an online bike shop that sells a wide range of bicycles.">
+  <meta name="keywords" content="bikes, bicycles, cycle, cyclebay, bike shop, bike store, online bike shop, online bike store">
+  {% endblock %}
+
+  {% block extra_meta %}
+  {% endblock %}
+
+  {% block corecss %}
+  <!-- favicon -->
+  <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+  <!-- Animate.css included to the owl library -->
+  <link rel="stylesheet" href="{% static 'libs/owl_carousel/docs/assets/css/animate.css' %}" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+   integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat&display=swap">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  {% endblock %}
+
+  {% block extra_css %}
+  {% endblock %}
+
+  {% block corejs %}
+  <script src="https://kit.fontawesome.com/e9c73d7092.js" crossorigin="anonymous"></script>
+  <script
+    src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+    crossorigin="anonymous"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous">
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+    crossorigin="anonymous">
+  </script>
+  <script src="https://js.stripe.com/v3/"></script>
+  {% endblock %}
+
+  {% block extra_js %}
+  {% endblock %}
+
+  <title>CycleBay {% block extra_title %}{% endblock %}</title>
+</head>
+
+<body class="d-flex flex-column vh-100">
+
+  <header class="position-relative border-bottom shadow-sm">
+
+    <!-- Topbar -->
+    <div class="border-bottom px-3 py-1 bg-light">
+      <div class="d-flex justify-content-between">
+        <div class="">
+          <a href="https://www.facebook.com/people/CycleBay/61552069412658/" class="text-muted-black" target="_blank" rel="noopener">
+            <i class="fab fa-facebook"></i>
+            <strong class="d-none d-sm-inline">Join us on Facebook</strong>
+            <strong class="d-inline d-sm-none">Join us</strong>
+          </a>
+        </div>
+        <div class="text-right">
+          {% if request.user.is_authenticated %}
+            {% if request.user.is_staff %}
+              <a class="pr-2 text-muted-black" href="{% url 'profile' %}">
+                <i class="fas fa-user"></i>
+                <span>My Profile</span>
+              </a>
+            {% endif %}
+            <a class="text-muted-black" href="{% url 'account_logout' %}">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+            </a>
+          {% else %}
+            <!-- add sign up and sign in -->
+            <a class="pr-2 text-muted-black" href="{% url 'account_signup' %}">
+              <i class="fas fa-user-plus"></i>
+              <span>Sign Up</span>
+            </a>
+            <a class="text-muted-black" href="{% url 'account_login' %}">
+              <i class="fas fa-sign-in-alt"></i>
+              <span>Sign In</span>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light">
+      <a class="navbar-brand d-none d-lg-block mr-4" href="{% url 'home' %}">
+        <img src="{% static 'images/logo.png' %}" alt="CycleBay logo" class="img-fluid" width="35">
+        <strong>CycleBay</strong>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <ul id="nav-buttons-list" class="list-inline list-unstyled d-flex align-items-center justify-content-end my-0 flex-grow-1 order-lg-last">
+        <!-- Centered search bar on large screens -->
+        <li class="list-inline-item mx-xl-auto">
+          <!-- Search bar for large screens -->
+          <div class="d-none d-xl-block">
+            <form class="form container" method="GET" action="{% url 'products' %}">
+              <div class="input-group">
+                <input class="form-control border-warning" type="text" name="q"
+                  placeholder="Search for bikes ...">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-warning" aria-label="Search button">
+                    <span class="icon"><i class="fas fa-search"></i></span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- Search button for collapsed search bar on small screens -->
+          <a class="text-black nav-link px-0 px-sm-2 d-xl-none" role="button"
+            data-toggle="collapse" href="#collapse-search-bar"
+            aria-expanded="false" aria-controls="collapse-search-bar">
+            <div class="text-center">
+              <i class="fa fa-search"></i>
+              <p class="my-0">Search</p>
+            </div>
+          </a>
+        </li>
+        {% if request.user.is_authenticated %}
+          <li class="list-inline-item">
+            <a class="text-black nav-link px-0 px-sm-2" href="{% url 'wishlist' %}" role="button">
+              <div class="text-center">
+                <i class="fas fa-heart" aria-label="Wishlist"></i>
+                <p class="my-0">Wishlist</p>
+              </div>
+            </a>
+          </li>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+          <li class="list-inline-item">
+            {% if request.user.is_staff %}
+              <a class="text-black nav-link px-0 px-sm-2" href="{% url 'add_product' %}" role="button">
+                <div class="text-center">
+                  <i class="fas fa-plus-square" aria-label="Add Product"></i>
+                  <p class="my-0">Add Item</p>
+                </div>
+              </a>
+            {% else %}
+              <a class="text-black nav-link px-0 px-sm-2" href="{% url 'profile' %}" role="button">
+                <div class="text-center">
+                  <i class="fas fa-user" aria-label="My Profile"></i>
+                  <p class="my-0">My Profile</p>
+                </div>
+              </a>
+            {% endif %}
+          </li>
+        {% endif %}
+        <li class="list-inline-item">
+          <a class="{% if grand_total %}font-weight-bold{% else %}text-secondary{% endif %} nav-link px-0 px-sm-2"
+            href="{% url 'view_bag' %}" role="button" style="color: #a14723ea;">
+            <div class="text-center">
+              <i class="fas fa-shopping-cart"></i>
+              <p class="my-0">
+                {% if grand_total %}
+                &euro;{{ grand_total|floatformat:2 }}
+                {% else %}
+                €0.00
+                {% endif %}
+              </p>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <div class="collapse navbar-collapse flex-grow-0" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item d-block d-lg-none">
+            <a class="logo-font font-weight-bold nav-link text-black" href="{% url 'home' %}" id="home-link">
+              Home
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="logo-font font-weight-bold nav-link text-black dropdown-toggle" href="#" id="all-products-link"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              All Bikes
+            </a>
+            <div class="dropdown-menu border-0" aria-labelledby="all-products-link">
+              <a href="{% url 'products' %}?sort=price&direction=asc" class="dropdown-item">By Price</a>
+              <a href="{% url 'products' %}?sort=color&direction=asc" class="dropdown-item ">By Color</a>
+              <a href="{% url 'products' %}?sort=brand&direction=asc" class="dropdown-item ">By Brand</a>
+              <a href="{% url 'products' %}?sort=category&direction=asc" class="dropdown-item ">By Category</a>
+              <a href="{% url 'products' %}" class="dropdown-item">All Products</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="logo-font font-weight-bold nav-link text-black dropdown-toggle" href="#" id="all-categories-link"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Categories
+            </a>
+            <div class="dropdown-menu border-0" aria-labelledby="all-categories-link">
+              {% for category in all_categories %}
+                <a class="dropdown-item" href="{% url 'products' %}?category={{ category.name }}">
+                  {{ category.friendly_name }}
+                </a>
+              {% endfor %}
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="logo-font font-weight-bold nav-link text-black" href="{% url 'featured_products' %}">
+              Special Offers
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="logo-font font-weight-bold nav-link text-black" href="{% url 'contact' %}" id="contact-us-link">
+              Contact Us
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- Search collapsible bar for small screens -->
+    <div class="collapse d-xl-none" id="collapse-search-bar">
+      <div class="card-body bg-white py-0 pb-3">
+        <form class="form container" method="GET" action="{% url 'products' %}">
+          <div class="input-group w-100">
+            <input class="form-control border border-warning" type="text" name="q"
+              placeholder="Search for bikes ...">
+            <div class="input-group-append">
+              <button class="btn btn-outline-warning" type="submit">
+                Search
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="message-container">
+      {% if messages %}
+        {% for message in messages %}
+          {% with message.level as level %}
+            {% if level == 40 %}
+              {% include 'includes/toasts/toast_error.html' %}
+            {% elif level == 30 %}
+              {% include 'includes/toasts/toast_warning.html' %}
+            {% elif level == 25 %}
+              {% include 'includes/toasts/toast_success.html' %}
+            {% else %}
+              {% include 'includes/toasts/toast_info.html' %}
+            {% endif %}
+            {% endwith %}
+        {% endfor %}
+      {% endif %}
+
+      <!-- The message container that used to display messages with js -->
+      <div id="ajax-message-container" class="d-none">
+        {% include 'includes/toasts/toast_info.html' %}
+      </div>
+
+    </div>
+  </header>
+
+  {% block page_header %}
+  {% endblock %}
+
+  {% block content %}
+  {% endblock %}
+
+  <!-- Footer -->
+  <footer class="container-fluid pt-2 pb-2 pt-md-4 pb-md-3 bg-dark text-white">
+    <div class="row">
+      <!-- Contact -->
+      <div class="col-12 col-md-4 my-3 my-md-0 text-center">
+        <h5>
+          <a href="{% url 'contact' %}" class="text-white border-bottom" style="text-decoration: none;">
+            Contact Us
+          </a>
+        </h5>
+        <ul class="list-unstyled">
+          <li class="my-2">
+            <h6>Our Address:</h6>
+            <p class="mb-0">
+              8 Bayview Lawns<br>
+              Dublin<br>
+              Ireland
+            </p>
+          </li>
+        </ul>
+      </div>
+      <!-- Social -->
+      <div class="col-12 col-md-4 my-3 my-md-0 text-center">
+        <h5>Social</h5>
+        <p>
+          Keep up to date with the latest news and offers from CycleBay
+        </p>
+        <a href="https://www.facebook.com/people/CycleBay/61552069412658/" target="_blank" rel="noopener">
+          <i class="fab fa-facebook"></i>
+          Follow us on Facebook
+        </a>
+      </div>
+      <!-- Payment -->
+      <div class="col-12 col-md-4 my-3 my-md-0 text-center">
+        <h5 class="">Payment Options</h5>
+        <p class="d-flex justify-content-center align-items-center">
+          <span class="pr-2 pb-1">Powered by</span>
+          <a href="https://stripe.com/ie" target="_blank" rel="noopener"
+            aria-label="Stripe logo">
+            <i class="fab fa-stripe fa-2x"></i>
+          </a>
+        </p>
+        <ul class="list-unstyled text-center">
+          <li class="my-2">
+            <i class="fab fa-cc-visa fa-2x"></i>
+            <i class="fab fa-cc-mastercard fa-2x"></i>
+            <i class="fab fa-cc-amex fa-2x"></i>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-12 text-center">
+        <!-- privacy and shipping policy -->
+        <a href="{% url 'privacy' %}" class="text-white mr-2">
+          <i class="fas fa-user-secret"></i>
+          Privacy Policy
+        </a>
+        <a href="{% url 'shipping' %}" class="text-white">
+          <i class="fas fa-shipping-fast"></i>
+          Shipping
+        </a>
+      </div>
+    </div>
+    <!-- Divider -->
+    <hr class="bg-white mx-auto my-2 w-50 text-center">
+    <!-- Bottom -->
+    <div class="row">
+      <div class="col-12 text-center">
+        <p class="mb-0">
+          &copy; 2023 CycleBay
+        </p>
+        <p class="my-0">
+          Developed by
+          <a href="https://www.linkedin.com/in/pavlo-myskov/" class="text-white border-bottom" target="_blank" rel="noopener"
+            style="text-decoration: none;">
+            Pavlo Myskov
+          </a>
+        </p>
+      </div>
+    </div>
+  </footer>
+  <!-- /.footer -->
+
+  {% block postloadjs %}
+    <script>
+      $('.custom-toast').toast('show');
+    </script>
+  {% endblock %}
+
+</body>
+
+</html>

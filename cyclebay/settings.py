@@ -36,7 +36,9 @@ ALLOWED_HOSTS = [
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    'material',  # Required for django-material-admin
+    'material.admin',  # Replaces django.contrib.admin
+    # 'django.contrib.admin',  # Keep this for compatibility
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -57,7 +59,6 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap4",
 ]
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -146,6 +147,7 @@ USE_TZ = True
 # ✅ LOCAL static/media file config
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+# Material Admin specific settings
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

@@ -104,7 +104,7 @@
         </a>
         
         <!-- Search bar for medium and large screens -->
-        <div class="d-none d-md-block mx-lg-4 flex-grow-1">
+        <div class="d-none d-md-block mx-lg-2 flex-grow-1">
           <form class="form" method="GET" action="{% url 'products' %}">
             <div class="input-group">
               <input class="form-control" type="text" name="q" placeholder="Find your perfect bike...">
@@ -161,6 +161,7 @@
               <a class="nav-link font-weight-bold {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
                  href="{% url 'home' %}">Home</a>
             </li>
+
             <li class="nav-item dropdown">
               <a class="nav-link font-weight-bold dropdown-toggle {% if 'products' in request.path %}active{% endif %}" 
                  href="#" id="all-products-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -174,6 +175,10 @@
                 <div class="dropdown-divider"></div>
                 <a href="{% url 'products' %}" class="dropdown-item">All Bikes</a>
               </div>
+            </li>
+                        <li class="nav-item">
+              <a class="nav-link font-weight-bold {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
+               <a href="{% url 'products' %}?category=parts">Parts</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link font-weight-bold dropdown-toggle" href="#" id="all-categories-link"

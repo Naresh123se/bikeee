@@ -36,9 +36,7 @@ ALLOWED_HOSTS = [
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
 INSTALLED_APPS = [
-    'material',  # Required for django-material-admin
-    'material.admin',  # Replaces django.contrib.admin
-    # 'django.contrib.admin',  # Keep this for compatibility
+    'django.contrib.admin',  # Keep this for compatibility
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",

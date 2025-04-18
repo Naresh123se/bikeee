@@ -12,7 +12,7 @@ body:
     required: true
 - type: markdown
   attributes:
-    value: "Thanks for contributing to the CycleBay!"
+    value: "Thanks for contributing to the MotoClub!"
 
 
 

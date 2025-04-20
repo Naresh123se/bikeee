@@ -81,9 +81,9 @@
                     <!-- Subtotal -->
                     <div class="col d-flex align-items-center">
                       {% if item.product_size_obj.count > 0 %}
-                      <p>&euro;{{ item.product.price | calc_subtotal:item.quantity }}</p>
+                      <p>Rs. {{ item.product.price | calc_subtotal:item.quantity }}</p>
                       {% else %}
-                      <p>&euro;0.00</p>
+                      <p>Rs. 0.00</p>
                       {% endif %}
                     </div>
                     <!-- Remove item -->
@@ -126,20 +126,20 @@
               <table class="table table-borderless table-sm">
                 <tr class="mb-2">
                   <td class="pr-3">Cart Total</td>
-                  <td class="text-right">&euro;{{ total|floatformat:2 }}</td>
+                  <td class="text-right">Rs. {{ total|floatformat:2 }}</td>
                 </tr>
                 <tr class="mb-2">
                   <td class="pr-3">Delivery</td>
-                  <td class="text-right">&euro;{{ delivery|floatformat:2 }}</td>
+                  <td class="text-right">Rs. {{ delivery|floatformat:2 }}</td>
                 </tr>
                 <tr class="mb-2">
                   <td class="pr-3"><strong>Grand Total</strong></td>
-                  <td class="text-right"><strong>&euro;{{ grand_total|floatformat:2 }}</strong></td>
+                  <td class="text-right"><strong>Rs. {{ grand_total|floatformat:2 }}</strong></td>
                 </tr>
                 {% if free_delivery_delta > 0 %}
                 <tr>
                   <td colspan="2" class="text-danger">
-                    You could get free delivery by spending just <strong>&euro;{{ free_delivery_delta|floatformat:2 }}</strong> more!
+                    You could get free delivery by spending just <strong>Rs. {{ free_delivery_delta|floatformat:2 }}</strong> more!
                   </td>
                 </tr>
                 {% endif %}

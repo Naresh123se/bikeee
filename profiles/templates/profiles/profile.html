@@ -36,41 +36,85 @@
     </div>
     <div class="col-12 col-lg-6">
       <hr class="d-lg-none w-75">
-      <p class="text-muted lead">Order History</p>
+      <p class="text-muted lead"> History</p>
       <div class="order-history table-responsive">
         <table class="table-sm table-borderless">
-          <thead>
+          <!-- <thead>
             <tr>
               <th>#</th>
               <th>Date</th>
+              <th>Day</th>
               <th>Items</th>
               <th>Total</th>
             </tr>
-          </thead>
-          <tbody>
-            {% for order in orders %}
-              <tr>
-                <td class="align-top">
-                  <a href="{% url 'order_history' order.order_number %}" title="{{ order.order_number }}">
-                    {{ order.order_number|truncatechars:6 }}
-                  </a>
-                </td>
-                <td class="align-top">{{ order.date|date:"d M Y" }} {{ order.date|time:"H:i" }}</td>
-                <td class="align-top">
-                  <ul class="pl-3 small" style="list-style-type: circle;">
-                    {% with order.original_bag|json_loads as original_bag %}
-                      {% for item in original_bag %}
-                        <li>
-                          {{ item.product_name }} - {{ item.size }} x{{ item.quantity }}
-                        </li>
-                      {% endfor %}
-                    {% endwith %}
-                  </ul>
-                </td>
-                <td class="align-top">&euro;{{ order.grand_total }}</td>
-              </tr>
+          </thead> -->
+<table class="min-w-full divide-y divide-gray-200">
+  <thead class="bg-gray-50">
+    <tr>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+    </tr>
+  </thead>
+  <tbody class="bg-white divide-y divide-gray-200">
+    {% for order in orders %}
+    <tr class="hover:bg-gray-50 transition-colors">
+      <!-- Order Number -->
+      <td class="px-6 py-4 whitespace-nowrap">
+        <div class="flex items-center">
+          <a href="{% url 'order_history' order.order_number %}" 
+             class="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+             title="{{ order.order_number }}">
+            {{ order.order_number|truncatechars:3 }}
+            <span class="text-xs text-gray-500 block mt-1">View Details</span>
+          </a>
+        </div>
+      </td>
+      
+      <!-- Date -->
+      <td class="px-6 py-4 whitespace-nowrap">
+        <div class="text-gray-700">{{ order.date|date:"d M Y" }}</div>
+        <div class="text-sm text-gray-500">{{ order.date|time:"H:i" }}</div>
+      </td>
+      
+      <!-- Days -->
+      <td class="px-6 py-4 whitespace-nowrap">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                  {% if order.day == 'lifetime' %}bg-green-100 text-green-800
+                  {% else %}bg-blue-100 text-blue-800{% endif %}">
+          {% if order.day == 'lifetime' %}
+            Purchase
+          {% else %}
+            {{ order.day }} day{{ order.day|pluralize }}/Rent
+          {% endif %}
+        </span>
+      </td>
+      
+      <!-- Items -->
+      <td class="px-6 py-4">
+        <ul class="list-disc pl-5 space-y-1">
+          {% with order.original_bag|json_loads as original_bag %}
+            {% for item in original_bag %}
+              <li class="text-gray-700">
+                <span class="font-medium">{{ item.product_name }}</span>
+                {% if item.size %}<span class="text-gray-500"> - {{ item.size }}</span>{% endif %}
+                <span class="text-gray-500"> ×{{ item.quantity }}</span>
+              </li>
             {% endfor %}
-          </tbody>
+          {% endwith %}
+        </ul>
+      </td>
+      
+      <!-- Total -->
+      <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+        Rs.{{ order.grand_total }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
         </table>
       </div>
     </div>

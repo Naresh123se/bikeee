@@ -25,6 +25,7 @@
    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   {% endblock %}
 
   {% block extra_css %}
@@ -55,7 +56,7 @@
   <title>MotoClub {% block extra_title %}{% endblock %}</title>
 </head>
 
-<body class="d-flex flex-column vh-100">
+<body class="d-flex flex-column vh-100 ">
 
   <header class="position-relative shadow-sm">
 
@@ -71,6 +72,10 @@
         </div>
         <div>
           {% if request.user.is_authenticated %}
+                     <a class="text-white mr-3" href="{% url 'profile' %}">
+                <i class="fas fa-user mr-1"></i>
+                <span>My Profile</span>
+              </a>
             {% if request.user.is_staff %}
               <a class="text-white mr-3" href="{% url 'profile' %}">
                 <i class="fas fa-user mr-1"></i>
@@ -120,12 +125,12 @@
         <!-- Action buttons -->
         <ul class="navbar-nav flex-row ml-auto mr-3">
           {% if request.user.is_authenticated %}
-          <li class="nav-item mx-2">
+          <!-- <li class="nav-item mx-2">
             <a class="nav-link position-relative" href="{% url 'wishlist' %}">
               <i class="fas fa-heart fa-lg"></i>
               <span class="sr-only">Wishlist</span>
             </a>
-          </li>
+          </li> -->
           {% endif %}
           
           {% if request.user.is_authenticated and request.user.is_staff %}
@@ -137,17 +142,28 @@
           </li>
           {% endif %}
           
-          <li class="nav-item mx-2">
-            <a class="nav-link position-relative {% if grand_total %}text-primary font-weight-bold{% endif %}" href="{% url 'view_bag' %}">
-              <i class="fas fa-shopping-cart fa-lg"></i>
-              {% if grand_total %}
-              <span class="badge badge-pill badge-primary position-absolute" style="top: 0; right: -5px;">
-                {{ grand_total|floatformat:0 }}
-              </span>
-              {% endif %}
-              <span class="sr-only">Shopping Cart</span>
-            </a>
-          </li>
+<li class="nav-item mx-1 md:mx-2 relative">
+  <a class="nav-link flex items-center hover:text-primary transition-colors duration-200 {% if grand_total %}text-primary font-semibold{% else %}text-gray-700{% endif %}" 
+     href="{% url 'view_bag' %}"
+     aria-label="Shopping Cart">
+     
+    <!-- Shopping Cart Icon -->
+    <div class="">
+      <i class="fas fa-shopping-cart text-xl md:text-lg"></i>
+      
+      <!-- Badge with subtle animation -->
+      {% if grand_total %}
+      <span class="absolute -top-2 -right-2 transform scale-100 hover:scale-110 transition-transform">
+        <span class="flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-primary p-1 text-white text-xs font-bold shadow-sm">
+          {{ grand_total|floatformat:0 }}
+        </span>
+      </span>
+      {% endif %}
+    </div>
+    
+   
+  </a>
+</li>
         </ul>
         
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
@@ -195,7 +211,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link font-weight-bold {% if request.resolver_match.url_name == 'featured_products' %}active{% endif %}" 
-                 href="{% url 'featured_products' %}">Special Offers</a>
+                 href="{% url 'featured_products' %}"> Offers</a>
             </li>
             <li class="nav-item">
               <a class="nav-link font-weight-bold {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" 
@@ -273,7 +289,7 @@
           <ul class="list-unstyled">
             <li class="mb-2"><a href="{% url 'home' %}" class="text-light"><i class="fas fa-chevron-right mr-2"></i>Home</a></li>
             <li class="mb-2"><a href="{% url 'products' %}" class="text-light"><i class="fas fa-chevron-right mr-2"></i>All Bikes</a></li>
-            <li class="mb-2"><a href="{% url 'featured_products' %}" class="text-light"><i class="fas fa-chevron-right mr-2"></i>Special Offers</a></li>
+            <li class="mb-2"><a href="{% url 'featured_products' %}" class="text-light"><i class="fas fa-chevron-right "></i> Offers</a></li>
             <li class="mb-2"><a href="{% url 'privacy' %}" class="text-light"><i class="fas fa-chevron-right mr-2"></i>Privacy Policy</a></li>
             <li class="mb-2"><a href="{% url 'shipping' %}" class="text-light"><i class="fas fa-chevron-right mr-2"></i>Shipping Information</a></li>
           </ul>

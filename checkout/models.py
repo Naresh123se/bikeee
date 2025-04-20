@@ -31,6 +31,7 @@ class Order(models.Model):
     street_address2 = models.CharField(max_length=80, null=True, blank=True)
     county = models.CharField(max_length=80, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
+    day = models.CharField(default="1", null=False, blank=False)
     delivery_cost = models.DecimalField(
         max_digits=6, decimal_places=2, null=False, default=0
     )

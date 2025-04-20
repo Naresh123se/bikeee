@@ -9,6 +9,7 @@ class OrderForm(forms.ModelForm):
         fields = (
             'full_name',
             'email',
+            'day',
             'phone_number',
             'street_address1',
             'street_address2',
@@ -27,6 +28,7 @@ class OrderForm(forms.ModelForm):
         placeholders = {
             'full_name': 'Full Name',
             'email': 'Email Address',
+            'day': 'Numbers of Days',
             'phone_number': 'Phone Number',
             'postcode': 'Postcode',
             'town_or_city': 'Town or City',

@@ -102,6 +102,7 @@ def checkout(request):
         form_data = {
             "full_name": request.POST["full_name"],
             "email": request.POST["email"],
+            "day": request.POST["day"],
             "phone_number": request.POST["phone_number"],
             "country": request.POST["country"],
             "postcode": request.POST["postcode"],
@@ -110,6 +111,7 @@ def checkout(request):
             "street_address2": request.POST["street_address2"],
             "county": request.POST["county"],
         }
+        
         order_form = OrderForm(form_data)
         # transaction.atomic() ensures all database operations are
         # completed successfully
